@@ -1,0 +1,22 @@
+    "id": "27270264",
+    "title": "Javascript, strange recursion behavior, DFS",
+    "body": "<p>So I had a simple task to implement DFS in Javascript. What seemed like it will be a quick work turned into never-ending witch hunt. The idea of assignment was to imitate multiple-parent behavior, by finding the first \"inherited\" function in dfs manner. The first implementation was working well, but after a lot of testing I found out that it doesn't visit some of the branches, sometimes. After 2 days, I boiled it down to this simplest case, deleted most of the code to make it as straight-forward as possible. So here's the function that creates a tree node:</p>\n\n<pre><code>function myObject(parentArgs){\n    var node = {};\n    node.parents = [];\n    node.hasParents = function(){return this.parents.length&gt;0};\n    for(i = 0; i&lt;parentArgs.length; i++){\n        node.parents.push(parentArgs[i]);\n    }\n\n    node.call = function(fun,args){\n        if(this[fun] != null)\n            return this[fun].apply(this,args);\n        var res = null;\n        for(i=0;i&lt;this.parents.length; i++){\n            res = this.parents[i].call(fun,args);\n            if(res!=null)\n                break;\n        }\n        return res;\n    }    \n    return node;\n}\nmyObject.create = function(args){\n    return myObject(args);\n}\n</code></pre>\n\n<p>And here are the tests:</p>\n\n<h1>1 (works):</h1>\n\n<pre><code>var c1 = myObject.create([]);\nvar c2 = myObject.create([]);\nc2.func = function(args){return \"func2: \" + args;};\nvar c3 = myObject.create([c1,c2]);\nvar c4 = myObject.create([]);\nvar c5 = myObject.create([c3]);\nvar c6 = myObject.create([c4,c5]);\nalert(c6.call(\"func\",[\"hello\"]));\n</code></pre>\n\n<h1>2 (doesn't work):</h1>\n\n<pre><code>var c0 = myObject.create([]);  //this line was added\nvar c1 = myObject.create([c0]); //c0 assigned as parent\nvar c2 = myObject.create([]);\nc2.func = function(args){return \"func2: \" + args;};\nvar c3 = myObject.create([c1,c2]);\nvar c4 = myObject.create([]);\nvar c5 = myObject.create([c3]);\nvar c6 = myObject.create([c4,c5]);\nalert(c6.call(\"func\",[\"hello\"]));\n</code></pre>\n\n<p>And even simpler case:</p>\n\n<h1>3 (works):</h1>\n\n<pre><code>var c1 = myObject.create([]);\nvar c2 = myObject.create([]);\nc2.func = function(args){return \"func2: \" + args;};\nvar c3 = myObject.create([c1,c2]);\nalert(c3.call(\"func\",[\"hello\"]));\n</code></pre>\n\n<h1>4 (doesn't work):</h1>\n\n<pre><code>var c0 = myObject.create([]);  //this line was added\nvar c1 = myObject.create([c0]); //c0 assigned as parent\nvar c2 = myObject.create([]);\nc2.func = function(args){return \"func2: \" + args;};\nvar c3 = myObject.create([c1,c2]);\nalert(c3.call(\"func\",[\"hello\"]));\n</code></pre>\n\n<p>What's stranger, is that c0 is in a different branch from c2, so it shouldn't be affected at all. I'm not sure where the bug is coming from. Please note that I deleted all input checking and circular-reference checking for the sake of simplicity of this code.</p>",
+    "accepted_answer_id": "27270865",
+    "answer_count": "1",
+    "comment_count": "0",
+    "community_owned_date": null,
+    "creation_date": "2014-12-03 11:13:04.137 UTC",
+    "favorite_count": null,
+    "last_activity_date": "2017-01-27 19:06:57.580 UTC",
+    "last_edit_date": "2017-01-27 19:06:57.580 UTC",
+    "last_editor_display_name": null,
+    "last_editor_user_id": "3768871",
+    "owner_display_name": null,
+    "owner_user_id": "1377178",
+    "parent_id": null,
+    "post_type_id": "1",
+    "score": "0",
+    "tags": "javascript|recursion|tree|depth-first-search",
+    "view_count": "256"
+
+title_length, body_length, tag_length, program, view_count

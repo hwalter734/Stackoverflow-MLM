@@ -1,0 +1,13 @@
+#standardSQL
+SELECT
+ character_length(table1.title) as title_length, character_length(table1.body) AS question_length, table1.accepted_answer_id, 
+ table1.creation_date as question_date, table1.tags, char_length(table1.tags) as tags_length, 
+ table1.view_count, table2.creation_date as answer_date
+FROM
+  `bigquery-public-data.stackoverflow.posts_questions` table1
+LEFT JOIN `bigquery-public-data.stackoverflow.posts_answers` table2
+ON (
+    table1.accepted_answer_id = table2.id
+)
+  WHERE table1.post_type_id = 1 AND table2.post_type_id = 2
+LIMIT 16000
